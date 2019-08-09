@@ -21,6 +21,11 @@ const Page = db.define('page', {
   },
 });
 
+//before a page row is validated, the slug field is populated using the title field
+Page.beforeValidate(pageInstance => {
+  pageInstance.slug = makeSlug(pageInstance.title);
+});
+
 const User = db.define('user', {
   name: {
     type: Sequelize.STRING,
@@ -34,5 +39,16 @@ const User = db.define('user', {
     },
   },
 });
+
+function makeSlug(title) {
+  let str = '';
+  for (let i = 0; i < title.length; i++) {
+    let currChar = title[i];
+    if (currChar === ' ') str += '_';
+    else str += currChar;
+  }
+
+  return str;
+}
 
 module.exports = { db, Page, User };
